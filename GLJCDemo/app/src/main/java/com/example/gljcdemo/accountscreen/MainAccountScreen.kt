@@ -126,9 +126,9 @@ fun MainAccountScreen(navController: NavController) {
                     Spacer(modifier = Modifier.padding(10.dp))
 
                     Column {
-                        Text(text = "管理员账号")
+                        Text(text = "用户：管理员")
                         Spacer(modifier = Modifier.padding(5.dp))
-                        Text(text = "ID: 1")
+                        Text(text = "账号: 1")
 
                     }
 

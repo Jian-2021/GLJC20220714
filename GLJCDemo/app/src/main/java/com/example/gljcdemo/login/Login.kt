@@ -1,6 +1,9 @@
 package com.example.gljcdemo.login
 
 
+import android.annotation.SuppressLint
+import android.content.ContentValues
+import android.content.Context
 import android.util.Log
 import android.view.Gravity
 import android.widget.Toast
@@ -36,31 +39,37 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.gljcdemo.R
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.system.exitProcess
 
 
 @Composable
-fun Login(navController: NavController) {
+fun Login(navController: NavController,viewModel: LoginViewModel) {
 
-
-
+    val context = LocalContext.current
+//    getLoginDataAndSave(context, viewModel)
 
     Column(modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally) {
-        var accountValue by rememberSaveable { mutableStateOf("") }
-        var passwordValue by rememberSaveable { mutableStateOf("") }
+        var accountValue by rememberSaveable { mutableStateOf("") }     ////////////账号输入框当前显示的值，也可获取输入值
+        var passwordValue by rememberSaveable { mutableStateOf("") }    ////////////密码输入框当前显示的值，也可获取输入值
 
         val passwordFocusRequest = remember { FocusRequester() }
         val localFocusManager = LocalFocusManager.current
-        val account1 = "1"
-        val password1 = "1"
-        val account2 = "2"
-        val password2 = "2"
-        val account3 = "3"
-        val password3 = "3"
-        val context = LocalContext.current
+//        val account1 = "1"
+//        val password1 = "1"
+//        val account2 = "2"
+//        val password2 = "2"
+//        val account3 = "3"
+//        val password3 = "3"
+
         var seePasswordToggle = remember { mutableStateOf(false) }
 
 
@@ -190,7 +199,7 @@ fun Login(navController: NavController) {
                 Spacer(modifier = Modifier.height(10.dp))
 
 
-                ///////////////////////////////记住密码
+                ///////////////////////////////记住密码//////////////////////////
 
                 var rememberPassword by remember {
                     mutableStateOf(false)             ////////默认不记住密码
@@ -212,6 +221,8 @@ fun Login(navController: NavController) {
 //
 //                }
                 Row {
+                    ///////////////////////////////记住密码选择框//////////////////////////
+
                     Text(text = "记住密码", modifier = Modifier.offset(10.dp, 12.dp), fontSize = 15.sp)
                     Checkbox(checked = rememberPassword, onCheckedChange = {
                         rememberPassword = it
@@ -223,6 +234,7 @@ fun Login(navController: NavController) {
                     ))
 
                     Spacer(modifier = Modifier.width(20.dp))
+                    ///////////////////////////////自动登录选择框//////////////////////////
 
                     Text(text = "自动登录", modifier = Modifier.offset(10.dp, 12.dp), fontSize = 15.sp)
                     Checkbox(checked = autoLogin, onCheckedChange = {
@@ -243,17 +255,17 @@ fun Login(navController: NavController) {
 //                登录按钮
                 Button(
                     onClick = {
-
+                        getLoginDataAndSave(context, viewModel)
 
                         localFocusManager.clearFocus()
 
-                        if (passwordValue.isEmpty() && accountValue.isEmpty()) {
+                        if (passwordValue.isEmpty() && accountValue.isEmpty()) {                      ///////////////当账号输入框或密码输入框为空
                             val toast = Toast
                                 .makeText(context, "请输入账号和密码", Toast.LENGTH_SHORT)
                             toast.setGravity(Gravity.CENTER, 0, 0)
                             toast.show()
 
-                        } else if ((account1 == accountValue) && (password1 == passwordValue)) {
+                        } else if ((viewModel.account.value == accountValue) && (viewModel.password.value == passwordValue)) {      ///////////////当账号输入
                             val toast = Toast
                                 .makeText(context, "登录成功", Toast.LENGTH_SHORT)
                             toast.setGravity(Gravity.CENTER, 0, 0)
@@ -262,7 +274,7 @@ fun Login(navController: NavController) {
 //                            navController.navigate(Screen.Home.route)
                             navController.navigate(com.example.gljcdemo.Screen.Home.route)
 
-                        } else if ((account2 == accountValue) && (password2 == passwordValue)) {
+                        } else if ((viewModel.account.value == accountValue) && (viewModel.password.value == passwordValue)) {
 
                             val toast = Toast
                                 .makeText(context, "登录成功", Toast.LENGTH_SHORT)
@@ -271,7 +283,7 @@ fun Login(navController: NavController) {
 
                             ////////////跳到南安界面
                             navController.navigate(com.example.gljcdemo.Screen.NanAn.route)
-                        } else if ((account3 == accountValue) && (password3 == passwordValue)) {
+                        } else if ((viewModel.account.value == accountValue) && (viewModel.password.value == passwordValue)) {
 
                             val toast = Toast
                                 .makeText(context, "登录成功", Toast.LENGTH_SHORT)
@@ -333,6 +345,123 @@ fun Login(navController: NavController) {
 //
 //
 //}
+
+fun getLoginDataAndSave(context: Context , viewModel: LoginViewModel){
+
+//////////////////创建配置数据库变量
+    val dbHelper = LoginDataBaseHelper(context, "LoginDataStore.db", 3)
+    val db = dbHelper.writableDatabase
+
+/////////////////配置网络
+    val retrofit = Retrofit.Builder()
+        .baseUrl("http://1.117.154.150:2222/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    val appService = retrofit.create(LoginService::class.java)
+
+
+    appService.getAppData().enqueue(
+        object : Callback<List<LoginApp>> {
+            override fun onResponse(call: Call<List<LoginApp>>, response: Response<List<LoginApp>>) {
+                val list = response.body()
+                if (list != null) {
+                    for (LoginApp in list) {
+                        Log.d("MainActivity", "id is ${LoginApp.id}")
+                        Log.d("MainActivity", "account is ${LoginApp.account}")
+                        Log.d("MainActivity", "password is ${LoginApp.password}")
+
+
+                        ///////////////////////////////////////////////////////////////////////////////////
+                        ////////将account网络数据存入viewModel
+                        viewModel.accountInput(LoginApp.account)
+                        viewModel.passwordInput(LoginApp.password)
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////存入数据库
+                        val values = ContentValues().apply {
+                            // 开始组装第一条数据
+                            put("id", LoginApp.id)
+                            put("account", LoginApp.account)
+                            put("password", LoginApp.password)
+
+                        }
+                        db.insert("LoginData", null, values) // 插入第一条数据
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////// 通过粒径分类计算车次
+//                        when(app.Category){
+//                            "0-5" -> carTimes0_5++
+//                            "5-10" ->carTimes5_10++
+//                            "10-25" ->carTimes10_25++
+//                            "20-31.5" ->carTimes20_31_5++
+//
+//                        }
+////////////////////////////////////////////////////////////////////用viewModel在界面上显示数据
+
+//                        viewModel.onInputChangecarTimes0_5(carTimes0_5.toString())
+//                        viewModel.onInputChangecarTimes5_10(carTimes5_10.toString())
+//                        viewModel.onInputChangecarTimes10_25(carTimes10_25.toString())
+//                        viewModel.onInputChangecarTimes20_31_5(carTimes20_31_5.toString())
+
+
+
+                    }
+                }
+
+            }
+
+            override fun onFailure(call: Call<List<LoginApp>>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+
+}
+
+
+//////////////////////////////读取SQLite .db 数据库
+fun queryLoginDataStore(context: Context, viewModel: LoginViewModel) {
+
+    val dbHelper = LoginDataBaseHelper(context, "LoginDataStore.db", 3)
+    val db = dbHelper.writableDatabase
+    // 查询GL表中所有的数据
+    val cursor = db.query("LoginData", null, null, null, null, null, null)
+    if (cursor.moveToFirst()) {
+        do {
+            // 遍历Cursor对象，取出数据并打印
+            @SuppressLint("Range") val IDofDB = cursor.getString(cursor.getColumnIndex("IDofDB"))     ////////////////////手机数据库里的id
+            @SuppressLint("Range") val id = cursor.getString(cursor.getColumnIndex("id"))              //////////////LoginData数据库里的id
+            @SuppressLint("Range") val account = cursor.getString(cursor.getColumnIndex("account"))    //////////////LoginData数据库里的账号
+            @SuppressLint("Range") val password = cursor.getString(cursor.getColumnIndex("password"))  //////////////LoginData数据库里的密码
+
+            Log.d("MainActivity", "GL ID0 is $IDofDB")
+            Log.d("MainActivity", "GL id is $id")
+            Log.d("MainActivity", "GL TimeStart is $account")
+            Log.d("MainActivity", "GL TimeEnd is $password")
+
+
+
+
+            ///////////////////////////////////////////////////////////////////////////////////
+            ////////用viewModel在界面上显示数据
+//            viewModel.onInputChange(timeEnd.toString())
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        } while (cursor.moveToNext())
+    }
+    cursor.close()
+
+}
+
+
+
+
+
+
 
 
 

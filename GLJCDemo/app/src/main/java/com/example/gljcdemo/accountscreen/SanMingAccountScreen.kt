@@ -122,9 +122,9 @@ fun SanMingAccountScreen(navController: NavController) {
                     Spacer(modifier = Modifier.padding(10.dp))
 
                     Column {
-                        Text(text = "三明华鑫")
+                        Text(text = "用户：三明华鑫")
                         Spacer(modifier = Modifier.padding(5.dp))
-                        Text(text = "ID: 3")
+                        Text(text = "账号: 3")
 
                     }
 

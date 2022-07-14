@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
@@ -29,6 +30,7 @@ import com.example.gljcdemo.homescreen.HomeScreen
 import com.example.gljcdemo.homescreen.NanAnHomeScreen
 import com.example.gljcdemo.homescreen.SanMingHomeScreen
 import com.example.gljcdemo.login.Login
+import com.example.gljcdemo.login.LoginViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -37,12 +39,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT     ////////////设置竖屏
         super.onCreate(savedInstanceState)
+
+        //////////////创建实例
+        val loginDataViewModel by viewModels<LoginViewModel>()
+
         setContent {
             GLJCDemoTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(),
                     color = Color.White) {
-                    Navigation()
+                    Navigation(loginDataViewModel)
                 }
             }
         }
@@ -56,13 +62,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DefaultPreview() {
     GLJCDemoTheme {
-        Navigation()
+//        Navigation()
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Navigation() {
+fun Navigation(viewModel: LoginViewModel) {
 
 
     val navController = rememberNavController()       /*官方*/
@@ -83,7 +89,7 @@ fun Navigation() {
 
         /*登录界面*/
         composable(route = Screen.Login.route) {
-            Login(navController)
+            Login(navController,viewModel)
 //            Screen.Login
         }
         /*------------------------------------------------------*/
