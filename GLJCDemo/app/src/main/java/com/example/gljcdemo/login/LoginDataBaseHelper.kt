@@ -8,7 +8,7 @@ import android.widget.Toast
 class LoginDataBaseHelper(val context: Context, name: String, version: Int) : SQLiteOpenHelper(context, name, null, version) {
 
 
-    private val createGL = "create table PSW (" +
+    private val createGL = "create table LoginData (" +
             "IDofDB integer primary key autoincrement," +
             "id text," +
             "account text," +
