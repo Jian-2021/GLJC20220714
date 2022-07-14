@@ -122,9 +122,9 @@ fun NanAnAccountScreen(navController: NavController) {
                     Spacer(modifier = Modifier.padding(10.dp))
 
                     Column {
-                        Text(text = "南安翔特")
+                        Text(text = "用户：南安翔特")
                         Spacer(modifier = Modifier.padding(5.dp))
-                        Text(text = "ID: 2")
+                        Text(text = "账号: 2")
 
                     }
 

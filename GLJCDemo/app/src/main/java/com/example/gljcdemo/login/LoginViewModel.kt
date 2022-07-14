@@ -1,8 +1,9 @@
 package com.example.gljcdemo.login
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
 
-class LoginViewModel {
+class LoginViewModel: ViewModel() {
 
     // 状态数据初始化，初始化为字符串
     var account = mutableStateOf("")
