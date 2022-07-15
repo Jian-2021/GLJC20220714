@@ -57,8 +57,9 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
     //////////////////创建配置数据库变量
     val dbHelper = LoginDataBaseHelper(context, "LoginDataStore.db", 3)
     val db = dbHelper.writableDatabase
-    getLoginDataAndSave(context, viewModel)
+    getLoginDataAndSave(context, viewModel)      ////////////////获取服务器上的账号密码
 //    queryLoginDataStore(context, viewModel)
+    queryRememberPassword(context, viewModel)    /////////////////读取本地数据库的记住密码状态，并传入viewModel
     Column(modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally) {
 ///////////////////////////////////////////////////////////////////////////最外层列//////////////////////////////////////////////////////////////////////
@@ -205,9 +206,11 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
 
 
                 ///////////////////////////////记住密码//////////////////////////
+                /////////////////////从viewModel中读取记住密码状态
+
 
                 var rememberPassword by remember {
-                    mutableStateOf(true)             ////////默认不记住密码
+                    mutableStateOf(viewModel.rememberPassword.value)             ////////默认不记住密码
                 }
                 var autoLogin by remember {
                     mutableStateOf(false)         ///////////默认不自动登录
@@ -232,7 +235,8 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                     Checkbox(checked = rememberPassword, onCheckedChange = {
                         rememberPassword = it
                         Log.d("rememberPassword","$rememberPassword")
-
+                        ////////将Login网络数据存入viewModel
+                        viewModel.rememberPasswordInput(rememberPassword)
                         val values = ContentValues().apply {
                             // 开始组装第一条数据
                             put("RememberPassword", rememberPassword)
@@ -240,6 +244,8 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                         }
                         db.delete("RememberPassword", "IDofDB > ?", arrayOf("0"))   ////删除数据库
                         db.insert("RememberPassword", null, values)              ////插入一条数据
+
+
                     }, colors = CheckboxDefaults.colors(
                         checkedColor = Color(0xFF448AFF),
                         uncheckedColor = Color.Black,
@@ -259,12 +265,10 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                 }
 
 
-
-
-
                 Spacer(modifier = Modifier.height(10.dp))
 
-//                登录按钮
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////登录按钮
                 Button(
                     onClick = {
 //                        getLoginDataAndSave(context, viewModel)
@@ -326,11 +330,10 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                     )
                 ) {
                     Text(text = "登录", fontSize = 20.sp)
-                }
-
-            } /////////////////////////////////////////////////////////////白色卡片内部列
-        } ///////////////////////////////////////////////////////////////////////////////白色卡片区域
-    } /////////////////////////////////////////////////////////////////////////////////////最外层列
+                }///////////////////////////////////////////////////////////////////////////登录按钮
+            } //////////////////////////////////////////////////////////////////////////////白色卡片内部列
+        } //////////////////////////////////////////////////////////////////////////////////白色卡片区域
+    } //////////////////////////////////////////////////////////////////////////////////////最外层列
     /////////监听返回键
     BackHandler(enabled = true) {
         Log.e("tag", "返回键被点击")
@@ -409,7 +412,7 @@ fun queryLoginDataStore(context: Context, viewModel: LoginViewModel) {
     val db = dbHelper.writableDatabase
 
     var i = 0        ////用来索引viewModel 中的数据
-    // 查询GL表中所有的数据
+    // 查询LoginData表中所有的数据
     val cursor = db.query("LoginData", null, null, null, null, null, null)
     if (cursor.moveToFirst()) {
         do {
@@ -440,7 +443,41 @@ fun queryLoginDataStore(context: Context, viewModel: LoginViewModel) {
 
 }
 
+//////////////////////////////读取SQLite .db 数据库
+fun queryRememberPassword(context: Context, viewModel: LoginViewModel) {
 
+    val dbHelper = LoginDataBaseHelper(context, "LoginDataStore.db", 3)
+    val db = dbHelper.writableDatabase
+
+    var i = 0        ////用来索引viewModel 中的数据
+    // 查询RememberPassword表中所有的数据
+    val cursor = db.query("RememberPassword", null, null, null, null, null, null)
+    if (cursor.moveToFirst()) {
+        do {
+            // 遍历Cursor对象，取出数据并打印
+            @SuppressLint("Range") val IDofDB = cursor.getString(cursor.getColumnIndex("IDofDB"))     ////////////////////手机数据库里的id
+            @SuppressLint("Range") val RememberPassword = cursor.getString(cursor.getColumnIndex("RememberPassword"))              //////////////LoginData数据库里的id
+
+
+            Log.d("MainActivity", "RememberPassword from Database IDofDB is $IDofDB")
+            Log.d("MainActivity", "RememberPassword from Database id is $RememberPassword")
+
+            Log.d("MainActivity", " i is $i")
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////将记住密码状态存入viewModel
+            var rememberPasswordBoolean = RememberPassword.toInt() != 0
+            viewModel.rememberPasswordInput(rememberPasswordBoolean)
+            Log.d("MainActivity", " rememberPasswordBoolean is $rememberPasswordBoolean")
+            i++
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        } while (cursor.moveToNext())
+    }
+    cursor.close()
+
+}
 
 
 
