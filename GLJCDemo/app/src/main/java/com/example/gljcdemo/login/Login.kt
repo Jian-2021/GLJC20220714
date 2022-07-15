@@ -61,6 +61,7 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
 //    queryLoginDataStore(context, viewModel)
     Column(modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally) {
+///////////////////////////////////////////////////////////////////////////最外层列//////////////////////////////////////////////////////////////////////
         var accountValue by rememberSaveable { mutableStateOf("") }     ////////////账号输入框当前显示的值，也可获取输入值
         var passwordValue by rememberSaveable { mutableStateOf("") }    ////////////密码输入框当前显示的值，也可获取输入值
 
@@ -116,13 +117,14 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                 .width(290.dp),
             shape = RoundedCornerShape(30.dp),
             elevation = 15.dp
-        ) {
+        ) {              /////////////////////////////////////////////////////白色卡片区域
             Column(
                 modifier = Modifier
                     .padding(horizontal = 30.dp)
                     .padding(top = 30.dp, bottom = 50.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                /////////////////////////////////////////////////////////////白色卡片内部列
                 Text(text = "骨料监测系统",
                     style = MaterialTheme.typography.h4,
                     modifier = Modifier.padding(bottom = 16.dp))
@@ -205,7 +207,7 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                 ///////////////////////////////记住密码//////////////////////////
 
                 var rememberPassword by remember {
-                    mutableStateOf(false)             ////////默认不记住密码
+                    mutableStateOf(true)             ////////默认不记住密码
                 }
                 var autoLogin by remember {
                     mutableStateOf(false)         ///////////默认不自动登录
@@ -233,10 +235,11 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
 
                         val values = ContentValues().apply {
                             // 开始组装第一条数据
-                            put("RememberPassword", it)
+                            put("RememberPassword", rememberPassword)
 
                         }
-                        db.insert("RememberPassword", null, values)              ////插入第一条数据
+                        db.delete("RememberPassword", "IDofDB > ?", arrayOf("0"))   ////删除数据库
+                        db.insert("RememberPassword", null, values)              ////插入一条数据
                     }, colors = CheckboxDefaults.colors(
                         checkedColor = Color(0xFF448AFF),
                         uncheckedColor = Color.Black,
@@ -325,12 +328,9 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                     Text(text = "登录", fontSize = 20.sp)
                 }
 
-            }
-        }
-
-
-    }
-
+            } /////////////////////////////////////////////////////////////白色卡片内部列
+        } ///////////////////////////////////////////////////////////////////////////////白色卡片区域
+    } /////////////////////////////////////////////////////////////////////////////////////最外层列
     /////////监听返回键
     BackHandler(enabled = true) {
         Log.e("tag", "返回键被点击")
@@ -339,23 +339,6 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
 
 }
 
-//class LoginActivity : AppCompatActivity(){
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-////        val prefs = getPreferences(Context.MODE_PRIVATE)
-////        val isRemember = prefs.getBoolean("remember_password", false)
-//        val editor = getSharedPreferences("LoginData",Context.MODE_PRIVATE).edit()
-//        editor.putString("account","1")
-//        editor.putString("password","1")
-//        editor.putBoolean("rememberPassword",false)
-//        editor.putBoolean("autoLogin",false)
-//
-//
-//
-//    }
-//
-//
-//}
 
 fun getLoginDataAndSave(context: Context , viewModel: LoginViewModel){
 
@@ -386,7 +369,8 @@ fun getLoginDataAndSave(context: Context , viewModel: LoginViewModel){
                         ////////将Login网络数据存入viewModel
                         viewModel.accountInput(LoginApp.account)
                         viewModel.passwordInput(LoginApp.password)
-
+//                        viewModel.accountFormDatabaseInput(LoginApp.account,LoginApp.id.toInt())
+//                        viewModel.passwordFormDatabaseInput(LoginApp.password,LoginApp.id.toInt())
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////存入数据库
                         val values = ContentValues().apply {
@@ -401,20 +385,7 @@ fun getLoginDataAndSave(context: Context , viewModel: LoginViewModel){
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////// 通过粒径分类计算车次
-//                        when(app.Category){
-//                            "0-5" -> carTimes0_5++
-//                            "5-10" ->carTimes5_10++
-//                            "10-25" ->carTimes10_25++
-//                            "20-31.5" ->carTimes20_31_5++
-//
-//                        }
-////////////////////////////////////////////////////////////////////用viewModel在界面上显示数据
 
-//                        viewModel.onInputChangecarTimes0_5(carTimes0_5.toString())
-//                        viewModel.onInputChangecarTimes5_10(carTimes5_10.toString())
-//                        viewModel.onInputChangecarTimes10_25(carTimes10_25.toString())
-//                        viewModel.onInputChangecarTimes20_31_5(carTimes20_31_5.toString())
 
 
 
@@ -437,7 +408,7 @@ fun queryLoginDataStore(context: Context, viewModel: LoginViewModel) {
     val dbHelper = LoginDataBaseHelper(context, "LoginDataStore.db", 3)
     val db = dbHelper.writableDatabase
 
-    val i = 0        ////用来索引viewModel 中的数据
+    var i = 0        ////用来索引viewModel 中的数据
     // 查询GL表中所有的数据
     val cursor = db.query("LoginData", null, null, null, null, null, null)
     if (cursor.moveToFirst()) {
@@ -452,18 +423,14 @@ fun queryLoginDataStore(context: Context, viewModel: LoginViewModel) {
             Log.d("MainActivity", "LoginData from Database id is $id")
             Log.d("MainActivity", "LoginData from Database account is $account")
             Log.d("MainActivity", "LoginData from Database account is $password")
+            Log.d("MainActivity", " i is $i")
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////将数据存入viewModel
 
-
-
-            ///////////////////////////////////////////////////////////////////////////////////
-            ////////用viewModel在界面上显示数据
-//            viewModel.onInputChange(timeEnd.toString())
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
+//            viewModel.accountFormDatabaseInput(account,i)
+//            viewModel.passwordFormDatabaseInput(password,i)
+            i++
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

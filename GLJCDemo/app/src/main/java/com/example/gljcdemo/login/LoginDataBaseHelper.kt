@@ -14,10 +14,10 @@ class LoginDataBaseHelper(val context: Context, name: String, version: Int) : SQ
             "account text," +
             "password text)"
 
-    private val createCategory = "create table Category (" +
-            "IDofDB integer primary key autoincrement," +
-            "category_name text," +
-            "category_code integer)"
+//    private val createCategory = "create table Category (" +
+//            "IDofDB integer primary key autoincrement," +
+//            "category_name text," +
+//            "category_code integer)"
 
     private val createRememberPassword = "create table RememberPassword (" +
             "IDofDB integer primary key autoincrement," +
@@ -25,17 +25,17 @@ class LoginDataBaseHelper(val context: Context, name: String, version: Int) : SQ
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(createLogin)
-        db.execSQL(createCategory)
+//        db.execSQL(createCategory)
         db.execSQL(createRememberPassword)
         Toast.makeText(context, "Create LoginDataBase succeeded", Toast.LENGTH_SHORT).show()
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         if (oldVersion <= 1) {
-            db.execSQL(createCategory)
+//            db.execSQL(createCategory)
         }
         if (oldVersion <= 2) {
-            db.execSQL("alter table LoginData add column category_id integer")
+//            db.execSQL("alter table LoginData add column category_id integer")
         }
     }
 
