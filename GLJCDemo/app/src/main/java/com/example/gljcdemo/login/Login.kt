@@ -60,6 +60,8 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
     getLoginDataAndSave(context, viewModel)      ////////////////获取服务器上的账号密码
 //    queryLoginDataStore(context, viewModel)
     queryRememberPassword(context, viewModel)    /////////////////读取本地数据库的记住密码状态，并传入viewModel
+    queryAutoLogin(context, viewModel)    /////////////////读取本地数据库的自动登录状态，并传入viewModel
+
     Column(modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally) {
 ///////////////////////////////////////////////////////////////////////////最外层列//////////////////////////////////////////////////////////////////////
@@ -68,19 +70,7 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
 
         val passwordFocusRequest = remember { FocusRequester() }
         val localFocusManager = LocalFocusManager.current
-//        val account1 = "1"
-//        val password1 = "1"
-//        val account2 = "2"
-//        val password2 = "2"
-//        val account3 = "3"
-//        val password3 = "3"
-
         var seePasswordToggle = remember { mutableStateOf(false) }
-
-
-
-
-
 
         Box(
             modifier = Modifier
@@ -131,7 +121,7 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                     modifier = Modifier.padding(bottom = 16.dp))
 
 
-//                输入账号
+///////////////////////////////////////////////////////////////////////////////////////////////////账号输入框
                 OutlinedTextField(
                     value = accountValue,
                     onValueChange = { accountValue = it },
@@ -160,7 +150,7 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                 Spacer(modifier = Modifier.height(10.dp))
 
 
-//                输入密码
+/**////////////////////////////////////////////////////////////////////////////////////////////////密码输入框
                 OutlinedTextField(
                     value = passwordValue,
                     onValueChange = { passwordValue = it },
@@ -201,6 +191,8 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
 
                     })
                 )
+///////////////////////////////////////////////////////////////////////////////////////////////密码输入框/**/
+
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -213,13 +205,14 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                     mutableStateOf(viewModel.rememberPassword.value)             ////////默认不记住密码
                 }
                 var autoLogin by remember {
-                    mutableStateOf(false)         ///////////默认不自动登录
+                    mutableStateOf(viewModel.autoLogin.value)                 ///////////默认不自动登录
                 }
 
-//                if (rememberPassword == false) {
-//                    autoLogin = false                  ///////////当不记住密码，就不自动登录
-//
-//                }
+                if (rememberPassword == false) {
+                    autoLogin = false                               ///////////当不记住密码，就不自动登录
+
+                }
+//                autoLogin = autoLogin&&rememberPassword
 
 //                if (autoLogin == true){
 //                    rememberPassword = true
@@ -234,9 +227,16 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                     Text(text = "记住密码", modifier = Modifier.offset(10.dp, 12.dp), fontSize = 15.sp)
                     Checkbox(checked = rememberPassword, onCheckedChange = {
                         rememberPassword = it
+                        if (it ==false){
+                            autoLogin = it
+                        }
+
                         Log.d("rememberPassword","$rememberPassword")
-                        ////////将Login网络数据存入viewModel
-                        viewModel.rememberPasswordInput(rememberPassword)
+                        Log.d("autoLogin","$autoLogin")
+//                        ////////将是否记住密码状态存入viewModel
+//                        viewModel.rememberPasswordInput(rememberPassword)
+
+                        ////////将是否记住密码状态存入数据库
                         val values = ContentValues().apply {
                             // 开始组装第一条数据
                             put("RememberPassword", rememberPassword)
@@ -244,7 +244,14 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                         }
                         db.delete("RememberPassword", "IDofDB > ?", arrayOf("0"))   ////删除数据库
                         db.insert("RememberPassword", null, values)              ////插入一条数据
+                        ////////将是否自动登录状态存入数据库
+                        val valuesAutoLogin = ContentValues().apply {
+                            // 开始组装第一条数据
+                            put("AutoLogin", autoLogin)
 
+                        }
+                        db.delete("AutoLogin", "IDofDB > ?", arrayOf("0"))   ////删除数据库
+                        db.insert("AutoLogin", null, valuesAutoLogin)              ////插入一条数据
 
                     }, colors = CheckboxDefaults.colors(
                         checkedColor = Color(0xFF448AFF),
@@ -256,8 +263,24 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
 
                     Text(text = "自动登录", modifier = Modifier.offset(10.dp, 12.dp), fontSize = 15.sp)
                     Checkbox(checked = autoLogin, onCheckedChange = {
-                        autoLogin = it
+                        autoLogin = if (rememberPassword){
+                            it
+                        }else {
+                            false
+                        }
+
+                        Log.d("rememberPassword","$rememberPassword")
                         Log.d("autoLogin","$autoLogin")
+
+                        ////////将是否自动登录状态存入数据库
+                        val values = ContentValues().apply {
+                            // 开始组装第一条数据
+                            put("AutoLogin", autoLogin)
+
+                        }
+                        db.delete("AutoLogin", "IDofDB > ?", arrayOf("0"))   ////删除数据库
+                        db.insert("AutoLogin", null, values)              ////插入一条数据
+
                     }, colors = CheckboxDefaults.colors(
                         checkedColor = Color(0xFF448AFF),
                         uncheckedColor = Color.Black,
@@ -426,7 +449,7 @@ fun queryLoginDataStore(context: Context, viewModel: LoginViewModel) {
             Log.d("MainActivity", "LoginData from Database id is $id")
             Log.d("MainActivity", "LoginData from Database account is $account")
             Log.d("MainActivity", "LoginData from Database account is $password")
-            Log.d("MainActivity", " i is $i")
+            Log.d("MainActivity", "LoginData i is $i")
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////将数据存入viewModel
@@ -460,9 +483,9 @@ fun queryRememberPassword(context: Context, viewModel: LoginViewModel) {
 
 
             Log.d("MainActivity", "RememberPassword from Database IDofDB is $IDofDB")
-            Log.d("MainActivity", "RememberPassword from Database id is $RememberPassword")
+            Log.d("MainActivity", "RememberPassword from Database RememberPassword is $RememberPassword")
 
-            Log.d("MainActivity", " i is $i")
+            Log.d("MainActivity", "RememberPassword i is $i")
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////将记住密码状态存入viewModel
@@ -479,7 +502,41 @@ fun queryRememberPassword(context: Context, viewModel: LoginViewModel) {
 
 }
 
+//////////////////////////////读取SQLite .db 数据库
+fun queryAutoLogin(context: Context, viewModel: LoginViewModel) {
 
+    val dbHelper = LoginDataBaseHelper(context, "LoginDataStore.db", 3)
+    val db = dbHelper.writableDatabase
+
+    var i = 0        ////用来索引viewModel 中的数据
+    // 查询RememberPassword表中所有的数据
+    val cursor = db.query("AutoLogin", null, null, null, null, null, null)
+    if (cursor.moveToFirst()) {
+        do {
+            // 遍历Cursor对象，取出数据并打印
+            @SuppressLint("Range") val IDofDB = cursor.getString(cursor.getColumnIndex("IDofDB"))     ////////////////////手机数据库里的id
+            @SuppressLint("Range") val AutoLogin = cursor.getString(cursor.getColumnIndex("AutoLogin"))              //////////////LoginData数据库里的id
+
+
+            Log.d("MainActivity", "AutoLogin from Database IDofDB is $IDofDB")
+            Log.d("MainActivity", "AutoLogin from Database AutoLogin is $AutoLogin")
+
+            Log.d("MainActivity", "AutoLogin i is $i")
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////将记住密码状态存入viewModel
+            var autoLoginBoolean = AutoLogin.toInt() != 0
+            viewModel.autoLoginInput(autoLoginBoolean)
+            Log.d("MainActivity", " AutoLoginBoolean is $autoLoginBoolean")
+            i++
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        } while (cursor.moveToNext())
+    }
+    cursor.close()
+
+}
 
 
 

@@ -23,10 +23,16 @@ class LoginDataBaseHelper(val context: Context, name: String, version: Int) : SQ
             "IDofDB integer primary key autoincrement," +
             "RememberPassword Boolean)"
 
+
+    private val createAutoLogin = "create table AutoLogin (" +
+            "IDofDB integer primary key autoincrement," +
+            "AutoLogin Boolean)"
+
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(createLogin)
 //        db.execSQL(createCategory)
         db.execSQL(createRememberPassword)
+        db.execSQL(createAutoLogin)
         Toast.makeText(context, "Create LoginDataBase succeeded", Toast.LENGTH_SHORT).show()
     }
 

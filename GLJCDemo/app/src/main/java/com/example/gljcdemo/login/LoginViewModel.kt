@@ -23,7 +23,7 @@ class LoginViewModel: ViewModel() {
     }
 
 
-///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////记住密码///////////////////////////////////
     // 状态数据初始化，初始化为布尔值
     var rememberPassword  = mutableStateOf(false)
     // 状态更新方法，将新输入的内容赋值给 MutableState<T> 对象的 value 值
@@ -31,6 +31,14 @@ class LoginViewModel: ViewModel() {
         rememberPassword.value = inputContent
     }
 
+
+    //////////////////////////////////自动登录///////////////////////////////////
+    // 状态数据初始化，初始化为布尔值
+    var autoLogin  = mutableStateOf(false)
+    // 状态更新方法，将新输入的内容赋值给 MutableState<T> 对象的 value 值
+    fun autoLoginInput(inputContent: Boolean) {
+        autoLogin.value = inputContent
+    }
 
 /////////////////////////////////数据库中的账号////////////////////////////////////////////
     // 状态数据初始化，初始化为列表
