@@ -72,7 +72,8 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
     Column(modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally) {
 ///////////////////////////////////////////////////////////////////////////最外层列//////////////////////////////////////////////////////////////////////
-        accountValue = viewModel.account.value /////////////////////////////////////////////////////死循环，导致内存泄露
+//        accountValue = viewModel.account.value /////////////////////////////////////////////////////死循环，导致内存泄露，这里不能直接赋值
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -130,7 +131,7 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                         accountValue = it
 
                                     },
-//                    placeholder = { Text(text = "账号", color = Color.Black) },
+                    placeholder = { Text(text = viewModel.account.value, color = Color.Black) },
                     label = { Text(text = "账号", color = Color.Black) },
                     leadingIcon = {
                         Icon(

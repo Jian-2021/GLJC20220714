@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 class LoginViewModel: ViewModel() {
 
     // 状态数据初始化，初始化为字符串
-    var account = mutableStateOf("")
+    var account = mutableStateOf("0")
     // 状态更新方法，将新输入的内容赋值给 MutableState<T> 对象的 value 值
     fun accountInput(inputContent: String) {
         account.value = inputContent
