@@ -57,8 +57,8 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
     //////////////////创建配置数据库变量
     val dbHelper = LoginDataBaseHelper(context, "LoginDataStore.db", 3)
     val db = dbHelper.writableDatabase
-//    getLoginDataAndSave(context, viewModel)
-
+    getLoginDataAndSave(context, viewModel)
+//    queryLoginDataStore(context, viewModel)
     Column(modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally) {
         var accountValue by rememberSaveable { mutableStateOf("") }     ////////////账号输入框当前显示的值，也可获取输入值
@@ -264,7 +264,8 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
 //                登录按钮
                 Button(
                     onClick = {
-                        getLoginDataAndSave(context, viewModel)
+//                        getLoginDataAndSave(context, viewModel)
+                        queryLoginDataStore(context, viewModel)
 
                         localFocusManager.clearFocus()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -368,7 +369,7 @@ fun getLoginDataAndSave(context: Context , viewModel: LoginViewModel){
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     val appService = retrofit.create(LoginService::class.java)
-
+    db.delete("LoginData", "IDofDB > ?", arrayOf("0"))   ////删除数据库
 
     appService.getAppData().enqueue(
         object : Callback<List<LoginApp>> {
@@ -395,9 +396,10 @@ fun getLoginDataAndSave(context: Context , viewModel: LoginViewModel){
                             put("password", LoginApp.password)
 
                         }
-                        db.insert("LoginData", null, values)              ////插入第一条数据
 
-                        db.delete("LoginData", "IDofDB > ?", arrayOf("3"))   ////删除数据库
+                        db.insert("LoginData", null, values)              ////插入一条数据
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////// 通过粒径分类计算车次
 //                        when(app.Category){
@@ -434,6 +436,8 @@ fun queryLoginDataStore(context: Context, viewModel: LoginViewModel) {
 
     val dbHelper = LoginDataBaseHelper(context, "LoginDataStore.db", 3)
     val db = dbHelper.writableDatabase
+
+    val i = 0        ////用来索引viewModel 中的数据
     // 查询GL表中所有的数据
     val cursor = db.query("LoginData", null, null, null, null, null, null)
     if (cursor.moveToFirst()) {
@@ -444,10 +448,10 @@ fun queryLoginDataStore(context: Context, viewModel: LoginViewModel) {
             @SuppressLint("Range") val account = cursor.getString(cursor.getColumnIndex("account"))    //////////////LoginData数据库里的账号
             @SuppressLint("Range") val password = cursor.getString(cursor.getColumnIndex("password"))  //////////////LoginData数据库里的密码
 
-            Log.d("MainActivity", "GL ID0 is $IDofDB")
-            Log.d("MainActivity", "GL id is $id")
-            Log.d("MainActivity", "GL TimeStart is $account")
-            Log.d("MainActivity", "GL TimeEnd is $password")
+            Log.d("MainActivity", "LoginData from Database IDofDB is $IDofDB")
+            Log.d("MainActivity", "LoginData from Database id is $id")
+            Log.d("MainActivity", "LoginData from Database account is $account")
+            Log.d("MainActivity", "LoginData from Database account is $password")
 
 
 
