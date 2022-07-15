@@ -258,7 +258,8 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                         getLoginDataAndSave(context, viewModel)
 
                         localFocusManager.clearFocus()
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        /////////////////////////////////////////////////////////验证账号密码
                         if (passwordValue.isEmpty() && accountValue.isEmpty()) {                      ///////////////当账号输入框或密码输入框为空
                             val toast = Toast
                                 .makeText(context, "请输入账号和密码", Toast.LENGTH_SHORT)
@@ -372,7 +373,7 @@ fun getLoginDataAndSave(context: Context , viewModel: LoginViewModel){
 
 
                         ///////////////////////////////////////////////////////////////////////////////////
-                        ////////将account网络数据存入viewModel
+                        ////////将Login网络数据存入viewModel
                         viewModel.accountInput(LoginApp.account)
                         viewModel.passwordInput(LoginApp.password)
 
@@ -386,6 +387,8 @@ fun getLoginDataAndSave(context: Context , viewModel: LoginViewModel){
 
                         }
                         db.insert("LoginData", null, values) // 插入第一条数据
+
+                        db.delete("LoginData", "IDofDB > ?", arrayOf("5"))
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////// 通过粒径分类计算车次
 //                        when(app.Category){

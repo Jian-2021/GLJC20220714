@@ -24,11 +24,7 @@ class LoginViewModel: ViewModel() {
         password.value = inputContent
     }
 
-    // 状态数据初始化，初始化为字符串
-    var carTimes0_5 = mutableStateOf("-")
 
-    // 状态数据初始化，初始化为字符串
-    var carTimes0_52 = mutableStateOf("-")
 
 
 
