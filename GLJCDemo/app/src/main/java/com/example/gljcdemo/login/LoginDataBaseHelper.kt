@@ -8,7 +8,7 @@ import android.widget.Toast
 class LoginDataBaseHelper(val context: Context, name: String, version: Int) : SQLiteOpenHelper(context, name, null, version) {
 
 
-    private val createGL = "create table LoginData (" +
+    private val createLogin = "create table LoginData (" +
             "IDofDB integer primary key autoincrement," +
             "id text," +
             "account text," +
@@ -20,7 +20,7 @@ class LoginDataBaseHelper(val context: Context, name: String, version: Int) : SQ
             "category_code integer)"
 
     override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL(createGL)
+        db.execSQL(createLogin)
         db.execSQL(createCategory)
         Toast.makeText(context, "Create succeeded", Toast.LENGTH_SHORT).show()
     }
@@ -30,7 +30,7 @@ class LoginDataBaseHelper(val context: Context, name: String, version: Int) : SQ
             db.execSQL(createCategory)
         }
         if (oldVersion <= 2) {
-            db.execSQL("alter table GL add column category_id integer")
+            db.execSQL("alter table LoginData add column category_id integer")
         }
     }
 
