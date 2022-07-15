@@ -388,7 +388,7 @@ fun getLoginDataAndSave(context: Context , viewModel: LoginViewModel){
                         }
                         db.insert("LoginData", null, values) // 插入第一条数据
 
-                        db.delete("LoginData", "IDofDB > ?", arrayOf("5"))
+                        db.delete("LoginData", "IDofDB > ?", arrayOf("3"))
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////// 通过粒径分类计算车次
 //                        when(app.Category){
