@@ -24,6 +24,14 @@ class LoginViewModel: ViewModel() {
         password.value = inputContent
     }
 
+    // 状态数据初始化，初始化为布尔值
+    var rememberPassword  = mutableStateOf(false)
+
+    // 状态更新方法，将新输入的内容赋值给 MutableState<T> 对象的 value 值
+    fun rememberPasswordInput(inputContent: Boolean) {
+        rememberPassword.value = inputContent
+    }
+
 
 
 

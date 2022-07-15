@@ -54,6 +54,9 @@ import kotlin.system.exitProcess
 fun Login(navController: NavController,viewModel: LoginViewModel) {
 
     val context = LocalContext.current
+    //////////////////创建配置数据库变量
+    val dbHelper = LoginDataBaseHelper(context, "LoginDataStore.db", 3)
+    val db = dbHelper.writableDatabase
 //    getLoginDataAndSave(context, viewModel)
 
     Column(modifier = Modifier.fillMaxWidth(),
@@ -228,6 +231,12 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                         rememberPassword = it
                         Log.d("rememberPassword","$rememberPassword")
 
+                        val values = ContentValues().apply {
+                            // 开始组装第一条数据
+                            put("RememberPassword", it)
+
+                        }
+                        db.insert("RememberPassword", null, values)              ////插入第一条数据
                     }, colors = CheckboxDefaults.colors(
                         checkedColor = Color(0xFF448AFF),
                         uncheckedColor = Color.Black,

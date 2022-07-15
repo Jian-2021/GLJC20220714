@@ -19,10 +19,15 @@ class LoginDataBaseHelper(val context: Context, name: String, version: Int) : SQ
             "category_name text," +
             "category_code integer)"
 
+    private val createRememberPassword = "create table RememberPassword (" +
+            "IDofDB integer primary key autoincrement," +
+            "RememberPassword Boolean)"
+
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(createLogin)
         db.execSQL(createCategory)
-        Toast.makeText(context, "Create succeeded", Toast.LENGTH_SHORT).show()
+        db.execSQL(createRememberPassword)
+        Toast.makeText(context, "Create LoginDataBase succeeded", Toast.LENGTH_SHORT).show()
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
