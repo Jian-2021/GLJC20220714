@@ -14,6 +14,10 @@ class LoginDataBaseHelper(val context: Context, name: String, version: Int) : SQ
             "account text," +
             "password text)"
 
+    private val createLocalLogin = "create table LocalLoginData (" +
+            "IDofDB integer primary key autoincrement," +
+            "localAccount text," +
+            "localPassword text)"
 //    private val createCategory = "create table Category (" +
 //            "IDofDB integer primary key autoincrement," +
 //            "category_name text," +
@@ -30,6 +34,7 @@ class LoginDataBaseHelper(val context: Context, name: String, version: Int) : SQ
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(createLogin)
+        db.execSQL(createLocalLogin)
 //        db.execSQL(createCategory)
         db.execSQL(createRememberPassword)
         db.execSQL(createAutoLogin)
