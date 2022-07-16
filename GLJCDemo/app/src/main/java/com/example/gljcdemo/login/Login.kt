@@ -136,7 +136,7 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                         accountValue = it
 
                                     },
-                    placeholder = { Text(text = viewModel.localAccount.value, color = Color.Black) },
+//                    placeholder = { Text(text = viewModel.localAccount.value, color = Color.Black) },
                     label = { Text(text = "账号", color = Color.Black) },
                     leadingIcon = {
                         Icon(
@@ -203,8 +203,9 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                     })
                 )
 ///////////////////////////////////////////////////////////////////////////////////////////////密码输入框/**/
-                Text(text = viewModel.localAccount.value)
-                Text(text = accountValue)
+                Text(text = "localAccount :${viewModel.localAccount.value}")
+                Text(text = "netAccount :${viewModel.netAccount.value}")
+                Text(text = "accountValue :$accountValue")
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -416,7 +417,8 @@ fun getLoginDataAndSave(context: Context , viewModel: LoginViewModel){
 
 /////////////////配置网络
     val retrofit = Retrofit.Builder()
-        .baseUrl("http://1.117.154.150:2222/")
+//        .baseUrl("http://1.117.154.150:2222/")
+        .baseUrl("http://192.168.50.108:2222/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     val appService = retrofit.create(LoginService::class.java)
@@ -468,7 +470,7 @@ fun getLoginDataAndSave(context: Context , viewModel: LoginViewModel){
 
 
 //////////////////////////////读取SQLite .db 数据库
-fun queryLoginDataStore(context: Context, viewModel: LoginViewModel) {
+fun queryNetLoginDataStore(context: Context, viewModel: LoginViewModel) {
 
     val dbHelper = LoginDataBaseHelper(context, "LoginDataStore.db", 3)
     val db = dbHelper.writableDatabase
@@ -496,8 +498,8 @@ fun queryLoginDataStore(context: Context, viewModel: LoginViewModel) {
             viewModel.netPasswordInput(password)
 //////////////////////////////将数据存入viewModel
 
-//            viewModel.accountFormDatabaseInput(account,i)
-//            viewModel.passwordFormDatabaseInput(password,i)
+//            viewModel.netAccountListInput(account,i)
+//            viewModel.netPasswordListInput(password,i)
             i++
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

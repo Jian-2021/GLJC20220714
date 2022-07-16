@@ -24,7 +24,7 @@ class LoginViewModel: ViewModel() {
     }
 
 
-
+/////////////////////////////////登录成功后保存到数据库中的账号////////////////////////////////////////////
     // 状态数据初始化，初始化为字符串
     var localAccount = mutableStateOf("")
     // 状态更新方法，将新输入的内容赋值给 MutableState<T> 对象的 value 值
@@ -33,7 +33,7 @@ class LoginViewModel: ViewModel() {
     }
 
 
-    /////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////登录成功后保存到数据库中的密码////////////////////////////////////////////
     // 状态数据初始化，初始化为字符串
     var localPassword  = mutableStateOf("")
     // 状态更新方法，将新输入的内容赋值给 MutableState<T> 对象的 value 值
@@ -62,22 +62,22 @@ class LoginViewModel: ViewModel() {
         autoLogin.value = inputContent
     }
 
-/////////////////////////////////数据库中的账号////////////////////////////////////////////
+/////////////////////////////////从服务器直接保存到数据库中的账号////////////////////////////////////////////
     // 状态数据初始化，初始化为列表
-    var accountFormDatabase  = mutableStateListOf("")
+    var netAccountList  = mutableStateListOf("")
     // 状态更新方法，将新输入的内容赋值给 MutableState<T> 对象的 value 值
-    fun accountFormDatabaseInput(inputContent: String,i : Int) {
-        accountFormDatabase[i] = inputContent
+    fun netAccountListInput(inputContent: String,i : Int) {
+        netAccountList[i] = inputContent
     }
 
 
 
-//////////////////////////////////数据库中的密码///////////////////////////////////////////
+//////////////////////////////////从服务器直接保存到数据库中的密码///////////////////////////////////////////
     // 状态数据初始化，初始化为列表
-    var passwordFormDatabase  = mutableStateListOf("")
+    var netPasswordList  = mutableStateListOf("")
     // 状态更新方法，将新输入的内容赋值给 MutableState<T> 对象的 value 值
-    fun passwordFormDatabaseInput(inputContent: String,i : Int) {
-        passwordFormDatabase[i] = inputContent
+    fun netPasswordListInput(inputContent: String,i : Int) {
+        netPasswordList[i] = inputContent
     }
 
 

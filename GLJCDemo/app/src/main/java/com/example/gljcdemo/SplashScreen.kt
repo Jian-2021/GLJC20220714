@@ -15,10 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.gljcdemo.login.LoginViewModel
-import com.example.gljcdemo.login.getLoginDataAndSave
-import com.example.gljcdemo.login.queryLocalLoginDataStore
-import com.example.gljcdemo.login.queryLoginDataStore
+import com.example.gljcdemo.login.*
 import kotlinx.coroutines.delay
 
 @Composable
@@ -29,7 +26,7 @@ fun SplashScreen(navController: NavController,viewModel: LoginViewModel) {
 
         getLoginDataAndSave(context, viewModel)      ////////////////获取服务器上的账号密码
         delay(800)
-        queryLoginDataStore(context, viewModel)      ////////////////这里不能查询总库
+        queryNetLoginDataStore(context, viewModel)      ////////////////这里不能查询总库
         delay(800)
         queryLocalLoginDataStore(context, viewModel)
         delay(800)
