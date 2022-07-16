@@ -84,7 +84,7 @@ fun Navigation(viewModel: LoginViewModel) {
         /*启动过场界面*/
 
         composable(route = Screen.Splash.route) {
-            SplashScreen(navController = navController)
+            SplashScreen(navController = navController,viewModel)
         }
 
         /*登录界面*/

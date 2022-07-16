@@ -10,15 +10,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.gljcdemo.login.LoginViewModel
+import com.example.gljcdemo.login.getLoginDataAndSave
+import com.example.gljcdemo.login.queryLoginDataStore
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navController: NavController) {
+fun SplashScreen(navController: NavController,viewModel: LoginViewModel) {
+    val context = LocalContext.current
+
     LaunchedEffect(key1 = true) {
+
+        getLoginDataAndSave(context, viewModel)      ////////////////获取服务器上的账号密码
+        queryLoginDataStore(context, viewModel)
         delay(800)
         navController.navigate(route = Screen.Login.route) {
             popUpTo(route = Screen.Splash.route) { inclusive = true }

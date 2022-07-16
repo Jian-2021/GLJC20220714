@@ -54,20 +54,25 @@ import kotlin.system.exitProcess
 fun Login(navController: NavController,viewModel: LoginViewModel) {
 
     val context = LocalContext.current
+
+//    getLoginDataAndSave(context, viewModel)      ////////////////获取服务器上的账号密码
+//    queryLoginDataStore(context, viewModel)
+    queryRememberPassword(context, viewModel)    /////////////////读取本地数据库的记住密码状态，并传入viewModel
+    queryAutoLogin(context, viewModel)    /////////////////读取本地数据库的自动登录状态，并传入viewModel
+
+
+
     //////////////////创建配置数据库变量
     val dbHelper = LoginDataBaseHelper(context, "LoginDataStore.db", 3)
     val db = dbHelper.writableDatabase
-//    var accountValue by rememberSaveable { mutableStateOf(viewModel.account.value) }     ////////////账号输入框当前显示的值，也可获取输入值,屏幕旋转不改变值
-    var accountValue by remember { mutableStateOf(viewModel.account.value) }               ////////////账号输入框当前显示的值，也可获取输入值
+    var accountValue by rememberSaveable { mutableStateOf(viewModel.account.value) }     ////////////账号输入框当前显示的值，也可获取输入值,屏幕旋转不改变值
+//    var accountValue by remember { mutableStateOf(viewModel.account.value) }               ////////////账号输入框当前显示的值，也可获取输入值
     var passwordValue by rememberSaveable { mutableStateOf("") }                     ////////////密码输入框当前显示的值，也可获取输入值,屏幕旋转不改变值
     val passwordFocusRequest = remember { FocusRequester() }
     val localFocusManager = LocalFocusManager.current
     var seePasswordToggle = remember { mutableStateOf(false) }
 
-    getLoginDataAndSave(context, viewModel)      ////////////////获取服务器上的账号密码
-    queryLoginDataStore(context, viewModel)
-    queryRememberPassword(context, viewModel)    /////////////////读取本地数据库的记住密码状态，并传入viewModel
-    queryAutoLogin(context, viewModel)    /////////////////读取本地数据库的自动登录状态，并传入viewModel
+
 
     Column(modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally) {
