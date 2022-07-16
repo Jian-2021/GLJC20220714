@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.gljcdemo.login.LoginViewModel
 import com.example.gljcdemo.login.getLoginDataAndSave
+import com.example.gljcdemo.login.queryLocalLoginDataStore
 import com.example.gljcdemo.login.queryLoginDataStore
 import kotlinx.coroutines.delay
 
@@ -27,7 +28,10 @@ fun SplashScreen(navController: NavController,viewModel: LoginViewModel) {
     LaunchedEffect(key1 = true) {
 
         getLoginDataAndSave(context, viewModel)      ////////////////获取服务器上的账号密码
-        queryLoginDataStore(context, viewModel)
+        delay(800)
+        queryLoginDataStore(context, viewModel)      ////////////////这里不能查询总库
+        delay(800)
+        queryLocalLoginDataStore(context, viewModel)
         delay(800)
         navController.navigate(route = Screen.Login.route) {
             popUpTo(route = Screen.Splash.route) { inclusive = true }

@@ -65,7 +65,7 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
     //////////////////创建配置数据库变量
     val dbHelper = LoginDataBaseHelper(context, "LoginDataStore.db", 3)
     val db = dbHelper.writableDatabase
-    var accountValue by rememberSaveable { mutableStateOf(viewModel.account.value) }     ////////////账号输入框当前显示的值，也可获取输入值,屏幕旋转不改变值
+    var accountValue by rememberSaveable { mutableStateOf(viewModel.localAccount.value) }     ////////////账号输入框当前显示的值，也可获取输入值,屏幕旋转不改变值
 //    var accountValue by remember { mutableStateOf(viewModel.account.value) }               ////////////账号输入框当前显示的值，也可获取输入值
     var passwordValue by rememberSaveable { mutableStateOf("") }                     ////////////密码输入框当前显示的值，也可获取输入值,屏幕旋转不改变值
     val passwordFocusRequest = remember { FocusRequester() }
@@ -130,13 +130,13 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////账号输入框
                 OutlinedTextField(
-                    value = viewModel.account.value,
+                    value = viewModel.localAccount.value,
                     onValueChange = {
-                        viewModel.account.value = it
+                        viewModel.localAccount.value = it
                         accountValue = it
 
                                     },
-                    placeholder = { Text(text = viewModel.account.value, color = Color.Black) },
+                    placeholder = { Text(text = viewModel.localAccount.value, color = Color.Black) },
                     label = { Text(text = "账号", color = Color.Black) },
                     leadingIcon = {
                         Icon(
@@ -203,7 +203,7 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                     })
                 )
 ///////////////////////////////////////////////////////////////////////////////////////////////密码输入框/**/
-                Text(text = viewModel.account.value)
+                Text(text = viewModel.localAccount.value)
                 Text(text = accountValue)
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -307,18 +307,19 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                 Button(
                     onClick = {
 //                        getLoginDataAndSave(context, viewModel)
-                        queryLoginDataStore(context, viewModel)
+//                        queryLoginDataStore(context, viewModel)
 
                         localFocusManager.clearFocus()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         /////////////////////////////////////////////////////////验证账号密码
+
                         if (passwordValue.isEmpty() && accountValue.isEmpty()) {                      ///////////////当账号输入框或密码输入框为空
                             val toast = Toast
                                 .makeText(context, "请输入账号和密码", Toast.LENGTH_SHORT)
                             toast.setGravity(Gravity.CENTER, 0, 0)
                             toast.show()
 
-                        } else if ((viewModel.account.value == accountValue) && (viewModel.password.value == passwordValue)) {      ///////////////当账号输入
+                        } else if ((viewModel.netAccount.value == accountValue) && (viewModel.netPassword.value == passwordValue)) {      ///////////////当账号输入
 
                             /////////////////////////////////将账号密码存入本地数据库
                             db.delete("LocalLoginData", "IDofDB > ?", arrayOf("0"))   ////删除数据库内容
@@ -337,7 +338,26 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
 //                            navController.navigate(Screen.Home.route)
                             navController.navigate(com.example.gljcdemo.Screen.Home.route)
 
-                        } else if ((viewModel.account.value == accountValue) && (viewModel.password.value == passwordValue)) {
+                        }else if ((viewModel.localAccount.value == accountValue) && (viewModel.localPassword.value == passwordValue)) {      ///////////////当账号输入
+
+                            /////////////////////////////////将账号密码存入本地数据库
+                            db.delete("LocalLoginData", "IDofDB > ?", arrayOf("0"))   ////删除数据库内容
+                            val localValues = ContentValues().apply {                                       // 开始组装数据
+                                put("localAccount", accountValue)
+                                put("localPassword", passwordValue)
+                            }
+                            db.insert("LocalLoginData", null, localValues)              ////插入一条数据
+
+
+                            val toast = Toast
+                                .makeText(context, "登录成功", Toast.LENGTH_SHORT)
+                            toast.setGravity(Gravity.CENTER, 0, 0)
+                            toast.show()
+                            ////////////跳到管理员界面
+//                            navController.navigate(Screen.Home.route)
+                            navController.navigate(com.example.gljcdemo.Screen.Home.route)
+
+                        } else if ((viewModel.localAccount.value == accountValue) && (viewModel.localPassword.value == passwordValue)) {
 
                             val toast = Toast
                                 .makeText(context, "登录成功", Toast.LENGTH_SHORT)
@@ -346,7 +366,7 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
 
                             ////////////跳到南安界面
                             navController.navigate(com.example.gljcdemo.Screen.NanAn.route)
-                        } else if ((viewModel.account.value == accountValue) && (viewModel.password.value == passwordValue)) {
+                        } else if ((viewModel.localAccount.value == accountValue) && (viewModel.localPassword.value == passwordValue)) {
 
                             val toast = Toast
                                 .makeText(context, "登录成功", Toast.LENGTH_SHORT)
@@ -406,6 +426,7 @@ fun getLoginDataAndSave(context: Context , viewModel: LoginViewModel){
         object : Callback<List<LoginApp>> {
             override fun onResponse(call: Call<List<LoginApp>>, response: Response<List<LoginApp>>) {
                 val list = response.body()
+                Log.d("MainActivity", "net list is $list")
                 if (list != null) {
                     for (LoginApp in list) {
                         Log.d("MainActivity", "net id is ${LoginApp.id}")
@@ -415,8 +436,8 @@ fun getLoginDataAndSave(context: Context , viewModel: LoginViewModel){
 
                         ///////////////////////////////////////////////////////////////////////////////////
                         //////将Login网络数据存入viewModel
-                        viewModel.accountInput(LoginApp.account)
-                        viewModel.passwordInput(LoginApp.password)
+//                        viewModel.accountInput(LoginApp.account)
+//                        viewModel.passwordInput(LoginApp.password)
 //                        viewModel.accountFormDatabaseInput(LoginApp.account,LoginApp.id.toInt())
 //                        viewModel.passwordFormDatabaseInput(LoginApp.password,LoginApp.id.toInt())
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -470,9 +491,9 @@ fun queryLoginDataStore(context: Context, viewModel: LoginViewModel) {
             Log.d("MainActivity", "LoginData i is $i")
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            ////////将Login数据库数据存入viewModel
-            viewModel.accountInput(account)
-            viewModel.passwordInput(password)
+//            ////////将Login数据库数据存入viewModel
+            viewModel.netAccountInput(account)
+            viewModel.netPasswordInput(password)
 //////////////////////////////将数据存入viewModel
 
 //            viewModel.accountFormDatabaseInput(account,i)
@@ -486,6 +507,46 @@ fun queryLoginDataStore(context: Context, viewModel: LoginViewModel) {
     cursor.close()
 
 }
+
+//////////////////////////////读取SQLite .db 数据库
+fun queryLocalLoginDataStore(context: Context, viewModel: LoginViewModel) {
+
+    val dbHelper = LoginDataBaseHelper(context, "LoginDataStore.db", 3)
+    val db = dbHelper.writableDatabase
+
+    var i = 0        ////用来索引viewModel 中的数据
+    // 查询LoginData表中所有的数据
+    val cursor = db.query("LocalLoginData", null, null, null, null, null, null)
+    if (cursor.moveToFirst()) {
+        do {
+            // 遍历Cursor对象，取出数据并打印
+            @SuppressLint("Range") val IDofDB = cursor.getString(cursor.getColumnIndex("IDofDB"))     ////////////////////手机数据库里的id
+            @SuppressLint("Range") val account = cursor.getString(cursor.getColumnIndex("localAccount"))    //////////////LocalLoginData数据库里的账号
+            @SuppressLint("Range") val password = cursor.getString(cursor.getColumnIndex("localPassword"))  //////////////LocalLoginData数据库里的密码
+
+            Log.d("MainActivity", "LocalLoginData from Database IDofDB is $IDofDB")
+            Log.d("MainActivity", "LocalLoginData from Database account is $account")
+            Log.d("MainActivity", "LocalLoginData from Database account is $password")
+            Log.d("MainActivity", "LocalLoginData i is $i")
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ////////将Login数据库数据存入viewModel
+            viewModel.localAccountInput(account)
+            viewModel.localPasswordInput(password)
+//////////////////////////////将数据存入viewModel
+
+//            viewModel.accountFormDatabaseInput(account,i)
+//            viewModel.passwordFormDatabaseInput(password,i)
+            i++
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        } while (cursor.moveToNext())
+    }
+    cursor.close()
+
+}
+
 
 //////////////////////////////读取SQLite .db 数据库
 fun queryRememberPassword(context: Context, viewModel: LoginViewModel) {
