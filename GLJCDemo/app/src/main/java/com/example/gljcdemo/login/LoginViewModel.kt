@@ -8,23 +8,44 @@ import androidx.lifecycle.ViewModel
 class LoginViewModel: ViewModel() {
 
     // 状态数据初始化，初始化为字符串
-    var account = mutableStateOf("0")
+    var netAccount = mutableStateOf("")
     // 状态更新方法，将新输入的内容赋值给 MutableState<T> 对象的 value 值
-    fun accountInput(inputContent: String) {
-        account.value = inputContent
+    fun netAccountInput(inputContent: String) {
+        netAccount.value = inputContent
     }
 
 
 /////////////////////////////////////////////////////////////////////////////////
     // 状态数据初始化，初始化为字符串
-    var password  = mutableStateOf("")
+    var netPassword  = mutableStateOf("")
     // 状态更新方法，将新输入的内容赋值给 MutableState<T> 对象的 value 值
-    fun passwordInput(inputContent: String) {
-        password.value = inputContent
+    fun netPasswordInput(inputContent: String) {
+        netPassword.value = inputContent
     }
 
 
-//////////////////////////////////记住密码///////////////////////////////////
+
+    // 状态数据初始化，初始化为字符串
+    var localAccount = mutableStateOf("")
+    // 状态更新方法，将新输入的内容赋值给 MutableState<T> 对象的 value 值
+    fun localAccountInput(inputContent: String) {
+        localAccount.value = inputContent
+    }
+
+
+    /////////////////////////////////////////////////////////////////////////////////
+    // 状态数据初始化，初始化为字符串
+    var localPassword  = mutableStateOf("")
+    // 状态更新方法，将新输入的内容赋值给 MutableState<T> 对象的 value 值
+    fun localPasswordInput(inputContent: String) {
+        localPassword.value = inputContent
+    }
+
+
+
+
+
+    //////////////////////////////////记住密码///////////////////////////////////
     // 状态数据初始化，初始化为布尔值
     var rememberPassword  = mutableStateOf(false)
     // 状态更新方法，将新输入的内容赋值给 MutableState<T> 对象的 value 值
