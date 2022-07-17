@@ -24,13 +24,20 @@ fun SplashScreen(navController: NavController,viewModel: LoginViewModel) {
 
     LaunchedEffect(key1 = true) {
         queryAutoLogin(context, viewModel)    /////////////////读取本地数据库的自动登录状态，并传入viewModel
-        delay(800)
+        delay(500)
         getLoginDataAndSave(context, viewModel)      ////////////////获取服务器上的账号密码
         delay(800)
         queryNetLoginDataStore(context, viewModel)      ////////////////这里不能查询总库
-        delay(800)
+        delay(500)
         queryLocalLoginDataStore(context, viewModel)
-        delay(800)
+        delay(500)
+        queryRememberPassword(context, viewModel)    /////////////////读取本地数据库的记住密码状态，并传入viewModel
+        delay(500)
+        queryAutoLogin(context, viewModel)    /////////////////读取本地数据库的自动登录状态，并传入viewModel
+
+        if (!viewModel.rememberPassword.value){
+            viewModel.localPasswordInput("")
+        }
         if(viewModel.autoLogin.value){
             ////////////跳到管理员界面
 //                            navController.navigate(Screen.Home.route)
@@ -43,6 +50,10 @@ fun SplashScreen(navController: NavController,viewModel: LoginViewModel) {
             }
 
         }
+
+
+
+
     }
     Box(
         modifier = Modifier.fillMaxSize(),
