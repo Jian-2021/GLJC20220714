@@ -70,8 +70,6 @@ class LoginViewModel: ViewModel() {
         netAccountList[i] = inputContent
     }
 
-
-
 //////////////////////////////////从服务器直接保存到数据库中的密码///////////////////////////////////////////
     // 状态数据初始化，初始化为列表
     var netPasswordList  = mutableStateListOf("")
@@ -81,12 +79,13 @@ class LoginViewModel: ViewModel() {
     }
 
 
-
-
-
-
-
-
+    /////////////////////////////////登录成功后保存到数据库中的账号////////////////////////////////////////////
+    // 状态数据初始化，初始化为字符串
+    var loginNetDataListSize = mutableStateOf("")
+    // 状态更新方法，将新输入的内容赋值给 MutableState<T> 对象的 value 值
+    fun loginNetDataListSizeInput(inputContent: String) {
+        loginNetDataListSize.value = inputContent
+    }
 
 
 
