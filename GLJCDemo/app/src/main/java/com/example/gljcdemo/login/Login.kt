@@ -52,15 +52,17 @@ import kotlin.system.exitProcess
 
 @Composable
 fun Login(navController: NavController,viewModel: LoginViewModel) {
-
     val context = LocalContext.current
+//    if(viewModel.autoLogin.value){
+//        ////////////跳到管理员界面
+////                            navController.navigate(Screen.Home.route)
+//        navController.navigate(com.example.gljcdemo.Screen.Home.route)
+//    }
 
 //    getLoginDataAndSave(context, viewModel)      ////////////////获取服务器上的账号密码
 //    queryLoginDataStore(context, viewModel)
     queryRememberPassword(context, viewModel)    /////////////////读取本地数据库的记住密码状态，并传入viewModel
     queryAutoLogin(context, viewModel)    /////////////////读取本地数据库的自动登录状态，并传入viewModel
-
-
 
     //////////////////创建配置数据库变量
     val dbHelper = LoginDataBaseHelper(context, "LoginDataStore.db", 3)
@@ -68,6 +70,15 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
     var accountValue by rememberSaveable { mutableStateOf(viewModel.localAccount.value) }     ////////////账号输入框当前显示的值，也可获取输入值,屏幕旋转不改变值
 //    var accountValue by remember { mutableStateOf(viewModel.account.value) }               ////////////账号输入框当前显示的值，也可获取输入值
     var passwordValue by rememberSaveable { mutableStateOf("") }                     ////////////密码输入框当前显示的值，也可获取输入值,屏幕旋转不改变值
+    passwordValue = if (viewModel.rememberPassword.value){
+        viewModel.localPassword.value
+
+    } else{
+        ""
+    }
+
+
+
     val passwordFocusRequest = remember { FocusRequester() }
     val localFocusManager = LocalFocusManager.current
     var seePasswordToggle = remember { mutableStateOf(false) }
@@ -203,10 +214,12 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                     })
                 )
 ///////////////////////////////////////////////////////////////////////////////////////////////密码输入框/**/
-                Text(text = "localAccount :${viewModel.localAccount.value}")
-                Text(text = "netAccount :${viewModel.netAccount.value}")
-                Text(text = "accountValue :$accountValue")
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////////////////////////////观察账号密码数据
+                Text(text = "localAccount :${viewModel.localAccount.value}  localPassword :${viewModel.localPassword.value}", fontSize = 10.sp)
+                Text(text = "netAccount :${viewModel.netAccount.value}  netPassword :${viewModel.netPassword.value}", fontSize = 10.sp)
+                Text(text = "accountValue :$accountValue  passwordValue :$passwordValue", fontSize = 10.sp)
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 Spacer(modifier = Modifier.height(10.dp))
 
 
@@ -242,6 +255,7 @@ fun Login(navController: NavController,viewModel: LoginViewModel) {
                         rememberPassword = it
                         if (it ==false){
                             autoLogin = it
+
                         }
 
                         Log.d("rememberPassword","$rememberPassword")
@@ -417,8 +431,8 @@ fun getLoginDataAndSave(context: Context , viewModel: LoginViewModel){
 
 /////////////////配置网络
     val retrofit = Retrofit.Builder()
-//        .baseUrl("http://1.117.154.150:2222/")
-        .baseUrl("http://192.168.50.108:2222/")
+        .baseUrl("http://1.117.154.150:2222/")
+//        .baseUrl("http://192.168.50.108:2222/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     val appService = retrofit.create(LoginService::class.java)

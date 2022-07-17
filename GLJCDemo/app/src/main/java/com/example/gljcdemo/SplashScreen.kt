@@ -23,15 +23,25 @@ fun SplashScreen(navController: NavController,viewModel: LoginViewModel) {
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
-
+        queryAutoLogin(context, viewModel)    /////////////////读取本地数据库的自动登录状态，并传入viewModel
+        delay(800)
         getLoginDataAndSave(context, viewModel)      ////////////////获取服务器上的账号密码
         delay(800)
         queryNetLoginDataStore(context, viewModel)      ////////////////这里不能查询总库
         delay(800)
         queryLocalLoginDataStore(context, viewModel)
         delay(800)
-        navController.navigate(route = Screen.Login.route) {
-            popUpTo(route = Screen.Splash.route) { inclusive = true }
+        if(viewModel.autoLogin.value){
+            ////////////跳到管理员界面
+//                            navController.navigate(Screen.Home.route)
+            navController.navigate(com.example.gljcdemo.Screen.Home.route){
+                popUpTo(route = Screen.Splash.route) { inclusive = true }
+            }
+        } else {
+            navController.navigate(route = Screen.Login.route) {
+                popUpTo(route = Screen.Splash.route) { inclusive = true }
+            }
+
         }
     }
     Box(
@@ -47,6 +57,8 @@ fun SplashScreen(navController: NavController,viewModel: LoginViewModel) {
             )
 
     }
+
+
 }
 
 
