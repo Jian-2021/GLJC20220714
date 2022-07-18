@@ -26,6 +26,7 @@ fun SplashScreen(navController: NavController,viewModel: LoginViewModel) {
     val dbHelper = LoginDataBaseHelper(context, "LoginDataStore.db", 3)
     val db = dbHelper.writableDatabase
     LaunchedEffect(key1 = true) {
+
         queryAutoLogin(context, viewModel)    /////////////////读取本地数据库的自动登录状态，并传入viewModel
         delay(500)
         queryRememberPassword(context, viewModel)    /////////////////读取本地数据库的记住密码状态，并传入viewModel
@@ -50,48 +51,44 @@ fun SplashScreen(navController: NavController,viewModel: LoginViewModel) {
         queryAutoLogin(context, viewModel)    /////////////////读取本地数据库的自动登录状态，并传入viewModel
 
 
-//        if(viewModel.autoLogin.value){
-//
-//            when(viewModel.localId.value.toInt()){
-//                0 ->{
-//                    ////////////跳到管理员界面
-////                            navController.navigate(Screen.Home.route)
-//                    navController.navigate(com.example.gljcdemo.Screen.Home.route){
-//                        popUpTo(route = Screen.Splash.route) { inclusive = true }
-//                    }
-//
-//                }
-//                1 ->{
-//                    ////////////跳到南安界面
-//                    navController.navigate(com.example.gljcdemo.Screen.NanAn.route){
-//                        popUpTo(route = Screen.Splash.route) { inclusive = true }
-//                    }
-//
-//                }
-//                2 ->{
-//                    ////////////跳到三明界面
-//                    navController.navigate(com.example.gljcdemo.Screen.SanMing.route){
-//                        popUpTo(route = Screen.Splash.route) { inclusive = true }
-//                    }
-//
-//                }
-//
-//
-//            }
-//
-//        } else {
-//            navController.navigate(route = Screen.Login.route) {
-//                popUpTo(route = Screen.Splash.route) { inclusive = true }
-//            }
-//
-//        }
+        if(viewModel.autoLogin.value){
+            when(viewModel.localId.value.toInt()){
+                0 ->{
+                    ////////////跳到管理员界面
+//                            navController.navigate(Screen.Home.route)
+                    navController.navigate(com.example.gljcdemo.Screen.Home.route){
+                        popUpTo(route = Screen.Splash.route) { inclusive = true }
+                    }
+                }
+                1 ->{
+                    ////////////跳到南安界面
+                    navController.navigate(com.example.gljcdemo.Screen.NanAn.route){
+                        popUpTo(route = Screen.Splash.route) { inclusive = true }
+                    }
+                }
+                2 ->{
+                    ////////////跳到三明界面
+                    navController.navigate(com.example.gljcdemo.Screen.SanMing.route){
+                        popUpTo(route = Screen.Splash.route) { inclusive = true }
+                    }
+                }
+            }
+        } else {
+            navController.navigate(route = Screen.Login.route) {
+                popUpTo(route = Screen.Splash.route) { inclusive = true }
+            }
 
-        navController.navigate(route = Screen.Login.route) {
-            popUpTo(route = Screen.Splash.route) { inclusive = true }
         }
+
+//        navController.navigate(route = Screen.Login.route) {
+//            popUpTo(route = Screen.Splash.route) { inclusive = true }
+//        }
 
 
     }
+
+
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center

@@ -89,7 +89,8 @@ fun Login(navController: NavController, viewModel: LoginViewModel) {
     val localFocusManager = LocalFocusManager.current
     var seePasswordToggle = remember { mutableStateOf(false) }
 
-
+    var loop = 0
+    var loginSucceed = false
 
     Column(modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally) {
@@ -224,10 +225,10 @@ fun Login(navController: NavController, viewModel: LoginViewModel) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //////////////////////////////////////////////////////////////////////////////观察账号密码数据
                 Text(text = "localAccount :${viewModel.localAccount.value}  localPassword :${viewModel.localPassword.value}", fontSize = 10.sp)
-                Text(text = "netAccount :${viewModel.netAccount.value}  netPassword :${viewModel.netPassword.value}", fontSize = 10.sp)
+//                Text(text = "netAccount :${viewModel.netAccount.value}  netPassword :${viewModel.netPassword.value}", fontSize = 10.sp)
                 Text(text = "accountValue :$accountValue  passwordValue :$passwordValue", fontSize = 10.sp)
                 for (n in 0 until viewModel.loginNetDataListSize.value.toInt()) {
-                    Text(text = "netAccountList :${viewModel.netAccountList[n]}  netPassword :${viewModel.netPasswordList[n]}", fontSize = 10.sp)
+                    Text(text = "netAccountList$n :${viewModel.netAccountList[n]}  netPasswordList$n :${viewModel.netPasswordList[n]}", fontSize = 10.sp)
                 }
 
 
@@ -264,15 +265,16 @@ fun Login(navController: NavController, viewModel: LoginViewModel) {
                 var  checkBoxEnable = true
                 if (accountValue.isEmpty()||passwordValue.isEmpty()){
                     checkBoxEnable  = false
-                    viewModel.autoLoginInput(false)
-                    ////////将是否自动登录状态存入数据库
-                    val values = ContentValues().apply {
-                        // 开始组装第一条数据
-                        put("AutoLogin", false)
-                    }
-                    db.delete("AutoLogin", "IDofDB > ?", arrayOf("0"))   ////删除数据库
-                    db.insert("AutoLogin", null, values)              ////插入一条数据
-                    navController.navigate(Screen.Login.route)       //////////跳转到登录界面
+                    rememberPassword =false
+//                    viewModel.autoLoginInput(false)
+//                    ////////将是否自动登录状态存入数据库
+//                    val values = ContentValues().apply {
+//                        // 开始组装第一条数据
+//                        put("AutoLogin", false)
+//                    }
+//                    db.delete("AutoLogin", "IDofDB > ?", arrayOf("0"))   ////删除数据库
+//                    db.insert("AutoLogin", null, values)              ////插入一条数据
+//                    navController.navigate(Screen.Login.route)       //////////跳转到登录界面
                 }
 
 
@@ -326,7 +328,7 @@ fun Login(navController: NavController, viewModel: LoginViewModel) {
 
                     Text(text = "自动登录", modifier = Modifier.offset(10.dp, 12.dp), fontSize = 15.sp)
                     Checkbox(checked = autoLogin, onCheckedChange = {
-                        autoLogin = if (rememberPassword) {
+                        autoLogin = if (rememberPassword  &&  accountValue.isNotEmpty()  &&  passwordValue.isNotEmpty()) {
                             it
                         } else {
                             false
@@ -364,8 +366,7 @@ fun Login(navController: NavController, viewModel: LoginViewModel) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         /////////////////////////////////////////////////////////验证账号密码
 
-                        var loop = 0
-                        var loginSucceed = false
+
                         for (n in 0 .. viewModel.loginNetDataListSize.value.toInt()) {
 //                            Text(text = "netAccountList :${viewModel.netAccountList[n]}  netPassword :${viewModel.netPasswordList[n]}", fontSize = 10.sp)
 
