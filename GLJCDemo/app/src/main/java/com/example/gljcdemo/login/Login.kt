@@ -389,6 +389,11 @@ fun Login(navController: NavController, viewModel: LoginViewModel) {
                                 toast.setGravity(Gravity.CENTER, 0, 0)
                                 toast.show()
 
+                            } else if (n ==viewModel.loginNetDataListSize.value.toInt()){
+                                val toast = Toast
+                                    .makeText(context, "账号或密码错误，请重新输入！", Toast.LENGTH_SHORT)
+                                toast.setGravity(Gravity.CENTER, 0, 0)
+                                toast.show()
                             }
 
 //                            else if(n==viewModel.loginNetDataListSize.value.toInt()&&(!((viewModel.netAccountList[n] == accountValue) && (viewModel.netPasswordList[n] == passwordValue)))){
@@ -397,15 +402,19 @@ fun Login(navController: NavController, viewModel: LoginViewModel) {
 //                                toast.setGravity(Gravity.CENTER, 0, 0)
 //                                toast.show()
 //                            }
+                            Log.d("n", "$n")
+                            Log.d("loop1", "$loop")
                             loop+=1
+                            Log.d("loop2", "$loop")
                         }
+                        Log.d("loop", "$loop")
 
-                        if (loop ==viewModel.loginNetDataListSize.value.toInt()){
-                            val toast = Toast
-                                .makeText(context, "账号或密码错误，请重新输入！", Toast.LENGTH_SHORT)
-                            toast.setGravity(Gravity.CENTER, 0, 0)
-                            toast.show()
-                        }
+//                        if (loop >=viewModel.loginNetDataListSize.value.toInt()){
+//                            val toast = Toast
+//                                .makeText(context, "账号或密码错误，请重新输入！", Toast.LENGTH_SHORT)
+//                            toast.setGravity(Gravity.CENTER, 0, 0)
+//                            toast.show()
+//                        }
 
 
 //                        else if ((viewModel.localAccount.value == accountValue) && (viewModel.localPassword.value == passwordValue)) {      ///////////////当账号输入
