@@ -27,6 +27,7 @@ import com.example.gljcdemo.*
 import com.example.gljcdemo.R
 import com.example.gljcdemo.accountscreen.AccountScreen
 import com.example.gljcdemo.accountscreen.NanAnAccountScreen
+import com.example.gljcdemo.login.LoginViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showSystemUi = true)
@@ -37,7 +38,7 @@ fun NanAnHomeScreenPreview() {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NanAnHomeScreen(navController: NavController) {
+fun NanAnHomeScreen(navController: NavController,viewModel: LoginViewModel) {
 
     val bottomData = listOf("首页", "报警", "详情", "我的")
     val iconList = listOf(Icons.Default.Home,
@@ -142,7 +143,7 @@ fun NanAnHomeScreen(navController: NavController) {
             0 -> NanAnHomeBodyContent()
             1 -> AlertBodyContent()
             2 -> DetailBodyContent()
-            3 -> NanAnAccountScreen(navController)
+            3 -> NanAnAccountScreen(navController,viewModel)
         }
 
     }

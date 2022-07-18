@@ -16,6 +16,7 @@ class LoginDataBaseHelper(val context: Context, name: String, version: Int) : SQ
 
     private val createLocalLogin = "create table LocalLoginData (" +
             "IDofDB integer primary key autoincrement," +
+            "localId text," +
             "localAccount text," +
             "localPassword text)"
 //    private val createCategory = "create table Category (" +

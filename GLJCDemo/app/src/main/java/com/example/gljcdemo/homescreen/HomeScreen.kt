@@ -29,12 +29,13 @@ import androidx.navigation.compose.rememberNavController
 import com.example.gljcdemo.*
 import com.example.gljcdemo.R
 import com.example.gljcdemo.accountscreen.MainAccountScreen
+import com.example.gljcdemo.login.LoginViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 //fun HomeScreen(onNavigateToOther: () -> Unit) {
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController ,viewModel: LoginViewModel) {
 
     val bottomData = listOf("首页", "报警", "详情", "我的")
     val iconList = listOf(Icons.Default.Home,
@@ -142,7 +143,7 @@ fun HomeScreen(navController: NavController) {
             1 -> AlertBodyContent()
             2 -> DetailBodyContent()
 //            3 -> AccountScreen()
-            3 -> MainAccountScreen(navController)
+            3 -> MainAccountScreen(navController,viewModel)
 
         }
         BackHandler(enabled = true) {

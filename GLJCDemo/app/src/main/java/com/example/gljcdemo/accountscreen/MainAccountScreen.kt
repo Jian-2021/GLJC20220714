@@ -1,6 +1,7 @@
 package com.example.gljcdemo.accountscreen
 
 
+import android.content.ContentValues
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -30,6 +31,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.gljcdemo.R
 import com.example.gljcdemo.Screen
+import com.example.gljcdemo.login.LoginDataBaseHelper
+import com.example.gljcdemo.login.LoginViewModel
 import com.example.gljcdemo.ui.theme.chartColor20_31_5
 import kotlinx.coroutines.delay
 
@@ -40,7 +43,7 @@ fun MainAccountScreenPreview() {
 }
 
 @Composable
-fun MainAccountScreen(navController: NavController) {
+fun MainAccountScreen(navController: NavController,viewModel:LoginViewModel) {
 
 
 //    val navController = rememberNavController()       /*官方*/
@@ -67,6 +70,11 @@ fun MainAccountScreen(navController: NavController) {
 ////        contentScale = ContentScale.Crop,
 //
 //    )
+    //////////////////创建配置数据库变量
+    val dbHelper = LoginDataBaseHelper(context, "LoginDataStore.db", 3)
+    val db = dbHelper.writableDatabase
+
+
 
     Column(modifier = Modifier.fillMaxSize()) {
 
@@ -219,6 +227,15 @@ fun MainAccountScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.padding(5.dp))
         Button(onClick = {
+            viewModel.autoLoginInput(false)
+            ////////将是否自动登录状态存入数据库
+            val values = ContentValues().apply {
+                // 开始组装第一条数据
+                put("AutoLogin", false)
+
+            }
+            db.delete("AutoLogin", "IDofDB > ?", arrayOf("0"))   ////删除数据库
+            db.insert("AutoLogin", null, values)              ////插入一条数据
 
             navController.navigate(Screen.Login.route)       //////////跳转到登录界面
 

@@ -26,11 +26,12 @@ import com.example.gljcdemo.*
 import com.example.gljcdemo.R
 import com.example.gljcdemo.accountscreen.AccountScreen
 import com.example.gljcdemo.accountscreen.SanMingAccountScreen
+import com.example.gljcdemo.login.LoginViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun SanMingHomeScreen(navController: NavController) {
+fun SanMingHomeScreen(navController: NavController,viewModel: LoginViewModel) {
 
     val bottomData = listOf("首页", "报警", "详情", "我的")
     val iconList = listOf(Icons.Default.Home,
@@ -135,7 +136,7 @@ fun SanMingHomeScreen(navController: NavController) {
             0 -> SanMingHomeBodyContent()
             1 -> AlertBodyContent()
             2 -> DetailBodyContent()
-            3 -> SanMingAccountScreen(navController = navController)
+            3 -> SanMingAccountScreen(navController = navController,viewModel)
         }
 
     }

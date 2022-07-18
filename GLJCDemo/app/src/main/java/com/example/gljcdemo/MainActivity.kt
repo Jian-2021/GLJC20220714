@@ -98,7 +98,7 @@ fun Navigation(viewModel: LoginViewModel) {
             route = Screen.Home.route /*路由名称*/
         ) {
             /*界面*/
-            HomeScreen(navController)
+            HomeScreen(navController,viewModel)
 //            {
 ////                navController.navigate(Screen.Alert.route)
 //                navController.popBackStack(             /*返回*/
@@ -110,13 +110,13 @@ fun Navigation(viewModel: LoginViewModel) {
         }
 
         composable(route = Screen.NanAn.route) {
-            NanAnHomeScreen(navController)
+            NanAnHomeScreen(navController,viewModel)
 
         }
 
 
         composable(route = Screen.SanMing.route) {
-            SanMingHomeScreen(navController)
+            SanMingHomeScreen(navController,viewModel)
         }
 
         /*------------------------------------------------------*/
@@ -149,7 +149,7 @@ fun Navigation(viewModel: LoginViewModel) {
             route = Screen.MainAccount.route /*路由名称*/
         ) {
             /*界面*/
-            MainAccountScreen(navController = navController)
+            MainAccountScreen(navController = navController,viewModel)
 
         }
         /*-------------------------------------------------*/

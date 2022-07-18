@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.gljcdemo.R
+import com.example.gljcdemo.Screen
 import kotlinx.coroutines.delay
 import retrofit2.Call
 import retrofit2.Callback
@@ -222,17 +223,18 @@ fun Login(navController: NavController, viewModel: LoginViewModel) {
 ///////////////////////////////////////////////////////////////////////////////////////////////密码输入框/**/
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //////////////////////////////////////////////////////////////////////////////观察账号密码数据
-//                Text(text = "localAccount :${viewModel.localAccount.value}  localPassword :${viewModel.localPassword.value}", fontSize = 10.sp)
-//                Text(text = "netAccount :${viewModel.netAccount.value}  netPassword :${viewModel.netPassword.value}", fontSize = 10.sp)
-//                Text(text = "accountValue :$accountValue  passwordValue :$passwordValue", fontSize = 10.sp)
-//
-//                for (n in 0 until viewModel.loginNetDataListSize.value.toInt()) {
-//                    Text(text = "netAccountList :${viewModel.netAccountList[n]}  netPassword :${viewModel.netPasswordList[n]}", fontSize = 10.sp)
-//                }
+                Text(text = "localAccount :${viewModel.localAccount.value}  localPassword :${viewModel.localPassword.value}", fontSize = 10.sp)
+                Text(text = "netAccount :${viewModel.netAccount.value}  netPassword :${viewModel.netPassword.value}", fontSize = 10.sp)
+                Text(text = "accountValue :$accountValue  passwordValue :$passwordValue", fontSize = 10.sp)
+                for (n in 0 until viewModel.loginNetDataListSize.value.toInt()) {
+                    Text(text = "netAccountList :${viewModel.netAccountList[n]}  netPassword :${viewModel.netPasswordList[n]}", fontSize = 10.sp)
+                }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 Spacer(modifier = Modifier.height(10.dp))
+
+
 
 
                 ///////////////////////////////记住密码//////////////////////////
@@ -259,6 +261,22 @@ fun Login(navController: NavController, viewModel: LoginViewModel) {
 //                    autoLogin = false
 //
 //                }
+                var  checkBoxEnable = true
+                if (accountValue.isEmpty()||passwordValue.isEmpty()){
+                    checkBoxEnable  = false
+                    viewModel.autoLoginInput(false)
+                    ////////将是否自动登录状态存入数据库
+                    val values = ContentValues().apply {
+                        // 开始组装第一条数据
+                        put("AutoLogin", false)
+                    }
+                    db.delete("AutoLogin", "IDofDB > ?", arrayOf("0"))   ////删除数据库
+                    db.insert("AutoLogin", null, values)              ////插入一条数据
+                    navController.navigate(Screen.Login.route)       //////////跳转到登录界面
+                }
+
+
+
                 Row {
                     ///////////////////////////////记住密码选择框//////////////////////////
 
@@ -269,6 +287,7 @@ fun Login(navController: NavController, viewModel: LoginViewModel) {
                             autoLogin = it
                             db.delete("LocalLoginData", "IDofDB > ?", arrayOf("0"))   ////删除数据库内容
                             val localValues = ContentValues().apply {                                       // 开始组装数据
+                                put("localId", "")
                                 put("localAccount", accountValue)
                                 put("localPassword", "")
                             }
@@ -300,7 +319,7 @@ fun Login(navController: NavController, viewModel: LoginViewModel) {
                     }, colors = CheckboxDefaults.colors(
                         checkedColor = Color(0xFF448AFF),
                         uncheckedColor = Color.Black,
-                    ))
+                    ), enabled = checkBoxEnable)
 
                     Spacer(modifier = Modifier.width(20.dp))
                     ///////////////////////////////自动登录选择框//////////////////////////
@@ -328,7 +347,7 @@ fun Login(navController: NavController, viewModel: LoginViewModel) {
                     }, colors = CheckboxDefaults.colors(
                         checkedColor = Color(0xFF448AFF),
                         uncheckedColor = Color.Black,
-                    ))
+                    ), enabled = checkBoxEnable)
                 }
 
 
@@ -346,31 +365,48 @@ fun Login(navController: NavController, viewModel: LoginViewModel) {
                         /////////////////////////////////////////////////////////验证账号密码
 
                         var loop = 0
+                        var loginSucceed = false
                         for (n in 0 .. viewModel.loginNetDataListSize.value.toInt()) {
 //                            Text(text = "netAccountList :${viewModel.netAccountList[n]}  netPassword :${viewModel.netPasswordList[n]}", fontSize = 10.sp)
 
                             if ((viewModel.netAccountList[n] == accountValue) && (viewModel.netPasswordList[n] == passwordValue)) {      ///////////////当账号输入
-
+                                loginSucceed = true
                                 /////////////////////////////////将账号密码存入本地数据库
                                 db.delete("LocalLoginData", "IDofDB > ?", arrayOf("0"))   ////删除数据库内容
                                 val localValues = ContentValues().apply {                                       // 开始组装数据
+                                        put("localId", n)
                                         put("localAccount", accountValue)
                                         put("localPassword", passwordValue)
                                     }
                                 db.insert("LocalLoginData", null, localValues)              ////插入一条数据
 
-                                val toast = Toast
-                                    .makeText(context, "登录成功", Toast.LENGTH_SHORT)
-                                toast.setGravity(Gravity.CENTER, 0, 0)
-                                toast.show()
+
                                 ////////////跳到管理员界面
                                 when (n) {
-                                    0 -> navController.navigate(com.example.gljcdemo.Screen.Home.route)  ////////////跳到管理员界面
-                                    1 -> navController.navigate(com.example.gljcdemo.Screen.NanAn.route)    ////////////跳到南安界面
-                                    2 -> navController.navigate(com.example.gljcdemo.Screen.SanMing.route)    ////////////跳到南安界面
+                                    0 -> {    ////////////跳到管理员界面
+                                        val toast = Toast
+                                            .makeText(context, "登录成功", Toast.LENGTH_SHORT)
+                                        toast.setGravity(Gravity.CENTER, 0, 0)
+                                        toast.show()
+                                        navController.navigate(com.example.gljcdemo.Screen.Home.route)
+                                    }
+                                    1 -> {    ////////////跳到南安界面
+                                        val toast = Toast
+                                            .makeText(context, "登录成功", Toast.LENGTH_SHORT)
+                                        toast.setGravity(Gravity.CENTER, 0, 0)
+                                        toast.show()
+                                        navController.navigate(com.example.gljcdemo.Screen.NanAn.route)
+                                    }
+                                    2 -> {    ////////////跳到管理员界面
+                                        val toast = Toast
+                                            .makeText(context, "登录成功", Toast.LENGTH_SHORT)
+                                        toast.setGravity(Gravity.CENTER, 0, 0)
+                                        toast.show()
+                                        navController.navigate(com.example.gljcdemo.Screen.SanMing.route)
+                                    }
+
                                 }
 
-                                break
                             } else if (n==viewModel.loginNetDataListSize.value.toInt()&&passwordValue.isEmpty() && accountValue.isEmpty()) {                      ///////////////当账号输入框或密码输入框为空
                                 val toast = Toast
                                     .makeText(context, "请输入账号和密码", Toast.LENGTH_SHORT)
@@ -389,7 +425,7 @@ fun Login(navController: NavController, viewModel: LoginViewModel) {
                                 toast.setGravity(Gravity.CENTER, 0, 0)
                                 toast.show()
 
-                            } else if (n ==viewModel.loginNetDataListSize.value.toInt()){
+                            } else if (n ==viewModel.loginNetDataListSize.value.toInt()&&(loginSucceed ==false)){
                                 val toast = Toast
                                     .makeText(context, "账号或密码错误，请重新输入！", Toast.LENGTH_SHORT)
                                 toast.setGravity(Gravity.CENTER, 0, 0)
@@ -415,49 +451,6 @@ fun Login(navController: NavController, viewModel: LoginViewModel) {
 //                            toast.setGravity(Gravity.CENTER, 0, 0)
 //                            toast.show()
 //                        }
-
-
-//                        else if ((viewModel.localAccount.value == accountValue) && (viewModel.localPassword.value == passwordValue)) {      ///////////////当账号输入
-//
-//                            /////////////////////////////////将账号密码存入本地数据库
-//                            db.delete("LocalLoginData", "IDofDB > ?", arrayOf("0"))   ////删除数据库内容
-//                            val localValues = ContentValues().apply {                                       // 开始组装数据
-//                                    put("localAccount", accountValue)
-//                                    put("localPassword", passwordValue)
-//                                }
-//                            db.insert("LocalLoginData", null, localValues)              ////插入一条数据
-//
-//                            val toast = Toast
-//                                .makeText(context, "登录成功", Toast.LENGTH_SHORT)
-//                            toast.setGravity(Gravity.CENTER, 0, 0)
-//                            toast.show()
-//                            ////////////跳到管理员界面
-////                            navController.navigate(Screen.Home.route)
-//                            navController.navigate(com.example.gljcdemo.Screen.Home.route)
-//
-//                        }
-//                        else if ((viewModel.localAccount.value == accountValue) && (viewModel.localPassword.value == passwordValue)) {
-//
-//                            val toast = Toast
-//                                .makeText(context, "登录成功", Toast.LENGTH_SHORT)
-//                            toast.setGravity(Gravity.CENTER, 0, 0)
-//                            toast.show()
-//
-//                            ////////////跳到南安界面
-//                            navController.navigate(com.example.gljcdemo.Screen.NanAn.route)
-//                        } else if ((viewModel.localAccount.value == accountValue) && (viewModel.localPassword.value == passwordValue)) {
-//
-//                            val toast = Toast
-//                                .makeText(context, "登录成功", Toast.LENGTH_SHORT)
-//                            toast.setGravity(Gravity.CENTER, 0, 0)
-//                            toast.show()
-//
-//                            ////////////跳到三明界面
-//                            navController.navigate(com.example.gljcdemo.Screen.SanMing.route)
-//                        }
-
-
-
 
 
                     },
@@ -576,8 +569,8 @@ fun queryNetLoginDataStore(context: Context, viewModel: LoginViewModel) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //            ////////将Login数据库数据存入viewModel
-            viewModel.netAccountInput(account)
-            viewModel.netPasswordInput(password)
+//            viewModel.netAccountInput(account)
+//            viewModel.netPasswordInput(password)
 //////////////////////////////将数据存入viewModel
 
             viewModel.netAccountList.add(i, account)
@@ -605,18 +598,22 @@ fun queryLocalLoginDataStore(context: Context, viewModel: LoginViewModel) {
         do {
             // 遍历Cursor对象，取出数据并打印
             @SuppressLint("Range") val IDofDB = cursor.getString(cursor.getColumnIndex("IDofDB"))     ////////////////////手机数据库里的id
+            @SuppressLint("Range") val localId = cursor.getString(cursor.getColumnIndex("localId"))     ////////////////////手机数据库里的id
             @SuppressLint("Range") val account = cursor.getString(cursor.getColumnIndex("localAccount"))    //////////////LocalLoginData数据库里的账号
             @SuppressLint("Range") val password = cursor.getString(cursor.getColumnIndex("localPassword"))  //////////////LocalLoginData数据库里的密码
 
             Log.d("MainActivity", "LocalLoginData from Database IDofDB is $IDofDB")
+            Log.d("MainActivity", "LocalLoginData from Database localId is $localId")
             Log.d("MainActivity", "LocalLoginData from Database account is $account")
-            Log.d("MainActivity", "LocalLoginData from Database account is $password")
+            Log.d("MainActivity", "LocalLoginData from Database password is $password")
             Log.d("MainActivity", "LocalLoginData i is $i")
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
             ////////将Login数据库数据存入viewModel
+            viewModel.localIdInput(localId)
             viewModel.localAccountInput(account)
             viewModel.localPasswordInput(password)
+
 //////////////////////////////将数据存入viewModel
 
 //            viewModel.accountFormDatabaseInput(account,i)
